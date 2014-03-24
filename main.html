@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ChargeLocator.com</title>
+
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+
+    <link rel="stylesheet" href="css/jquery.mobile-1.3.2.min.css"/>
+    <link rel="stylesheet" href="css/jqm141.css"/>
+
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.mobile-1.3.1.min.js"></script>
+
+    <link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet"
+          type="text/css"/>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+    <script type="text/javascript" src="phonegap.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+</head>
+<body onload="onLoad()">
+
+<script type="text/javascript">
+    app.initialize();
+</script>
+
+
+<!--SPLASH SCREEN-->
+<div data-role="page" id="splashScreen" data-theme='a' style=" background: url(img/charge.gif);
+            background-repeat:no-repeat;
+            background-position:center center;
+            background-size:cover;">
+
+</div>
+<!--LOGIN_PAGE-->
+<div data-role="page" id="pageLogin" data-theme='a'>
+
+
+    <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+        <h3>Charge.info</h3>
+    </div>
+    <div data-role="content">
+        <form id="check-user" data-ajax="false">
+            <h3>Login</h3>
+            <div data-role="fieldcontain">
+                <label for="username">Enter your username:</label>
+                <input type="text" value="" name="username" id="username" data-clear-btn="true" data-theme='a'/>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="password">Enter your password:</label>
+                <input type="password" value="" name="password" id="password" data-clear-btn="true" data-theme='a'/>
+            </div>
+            <input type="button" data-theme='a' name="submit" id="submit" value="Login!" data-icon="forward">
+        </form>
+        <div data-role="fieldcontain">
+            <label for="regBut">Earn chargelocator points by registering and submitting chargelocator locations which you can trade for goods</label>
+            <a id="regBut" href="#registerPage" data-role="button" data-theme="e">Register.</a>
+        </div>
+
+        <a href="#passWordRecoveryPage" data-role="button">Forgot password.</a>
+
+       <!-- <div data-role="popup" id="popupLogon">
+            <a href="#" data-rel="back" data-role="button" data-theme='a' data-icon="delete" data-iconpos="notext"
+               class="ui-btn-right">Close</a>
+
+            <div data-role="header" data-theme='a'>
+                <h1>Required fields must be filled out.</h1>
+            </div>
+
+            <div data-role="content" data-theme='a'>
+                <p>Please fill all necessary fields. *</p>
+            </div>
+            <div  data-role="footer" data-theme='a'>
+                <a href="dialog/index.html" data-rel="back" data-icon="ok" data-iconpos="left" data-role="button"
+                   data-inline="true">ok</a>
+            </div>
+        </div>-->
+    </div>
+</div>
+
+
+<!--GPS_PAGE-->
+<div data-role="page" id="gpsPage" data-theme='a'>
+    <div data-role="header" data-id="head1" data-position="fixed" data-tap-toggle="false">
+        <h3>Charge.info</h3>
+
+        <div data-role="navbar" data-tap-toggle="false">
+            <ul>
+                <li>
+                    <a data-icon="myapp-navigation"  class="ui-btn-active ui-state-persist">locate</a>
+                </li>
+                <li><a data-icon="gear"  class="ui-disabled">socket</a>
+                </li>
+                <li><a data-icon="myapp-camera" class="ui-disabled">photo</a>
+                </li>
+                <li><a data-icon="myapp-eye" class="ui-disabled">confirm</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /navbar -->
+    </div>
+    <!-- /header -->
+    <div data-role="content" id="content" data-inset="true">
+
+        <div id='map-canvas' style="height: 250px"></div>
+        <button id="maps">Locate your current position</button>
+        <h2>Coordinates</h2>
+
+        <div data-role='fieldcontain'>
+            <label for='longitude1'>
+                Longitude*
+            </label>
+            <input name='longitude1' id='longitude1' type='text'>
+        </div>
+        <div data-role='fieldcontain'>
+            <label for='latitude1'>
+                Latitude*
+            </label>
+            <input name='latitude1' id='latitude1' type='text'>
+        </div>
+
+        <h2>Location</h2>
+
+        <div data-role="fieldcontain">
+            <label for="locname1">
+                Location name*
+            </label>
+            <input name="locname1" id="locname1" type="text" required>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="street1">
+                Street & number*
+            </label>
+            <input name="street1" id="street1" type="text">
+        </div>
+
+        <div data-role="fieldcontain">
+            <label for="postalcode1">
+                Postalcode*
+            </label>
+            <input name="postalcode1" id="postalcode1" type="number" required>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="city1">
+                City*
+            </label>
+            <input name="city" id="city1" value="" type="text" required>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="country1">
+                Country*
+            </label>
+            <select id="country1" name="country1" data-theme='a' >
+            </select>
+        </div>
+<!--        <div data-role="fieldcontain">
+            <a  data-role="button" id="buttonNext1" data-icon="forward" data-theme="b">Next</a>
+        </div>-->
+        <!--<div data-role="popup" id="popupGpsValidate">
+            <a href="#" data-rel="back" data-role="button" data-theme='a' data-icon="delete" data-iconpos="notext"
+               class="ui-btn-right">Close</a>
+            <div data-role="header" data-theme='a'>
+                <h1>Required fields must be filled out.</h1>
+            </div>
+            <div data-role="content" data-theme='a'>
+                <p>Please fill all necessary fields. *</p>
+            </div>
+            <div  data-role="footer" data-theme='a'>
+                <a href="dialog/index.html" data-rel="back" data-icon="ok" data-iconpos="left" data-role="button"
+                   data-inline="true">ok</a>
+            </div>
+        </div>-->
+    </div>
+   <div data-role="footer" data-id="foo1" data-position="fixed" data-tap-toggle="false" data-theme='a' id="test123">
+        <div data-role="navbar">
+            <ul >
+                <!--<li><a data-rel="back" data-icon="back" class="">logout</a>-->
+                    <!--</li>-->
+                <li>
+                    <a id="buttonNext" data-icon="forward" data-theme="b">socket</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /footer -->
+</div>
+<!--END_GPS_PAGE-->
+
+<!--BEGINN_SOCKET_PAGE-->
+<div data-role="page" id="pageSockets" data-theme='a'>
+
+    <div data-role="header" data-id="head1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+        <h3>Charge.info</h3>
+        <div data-role="navbar">
+            <ul>
+                <li>
+                    <a data-icon="myapp-navigation" class="ui-disabled">locate</a>
+                </li>
+                <li><a data-icon="gear" class="ui-btn-active ui-state-persist">socket</a>
+                </li>
+                <li><a data-icon="myapp-camera" class="ui-disabled">photo</a>
+                </li>
+                <li><a data-icon="myapp-eye" class="ui-disabled">confirm</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /navbar -->
+    </div>
+    <!-- /header -->
+    <div data-role="content">
+        <div data-role="fieldcontain">
+            <label for="socketType1" class="select">Socket type 1*</label>
+            <select data-theme='a' name="socketType1" id="socketType1" multiple="multiple" data-native-menu="true"
+                    data-icon="grid" data-iconpos="left" >
+            </select>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="socketType2" class="select">Socket type 2*</label>
+            <select data-theme='a' name="socketType2" id="socketType2" multiple="multiple" data-native-menu="true"
+                    data-icon="grid" data-iconpos="left">
+            </select>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="ampere1">
+                Ampere*
+            </label>
+            <input type="number" name="ampere1" id="ampere1" placeholder="0-500" value=""/>
+        </div>
+
+        <div data-role="fieldcontain">
+            <label for="nivel1">
+                Select group*
+            </label>
+            <select id="nivel1" name="nivel1" data-theme='a' data-native-menu='true'>
+            </select>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="siteType">
+                Select site type*
+            </label>
+            <select id="siteType" name="siteType" data-theme='a' data-native-menu='true'>
+            </select>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="description1">
+                Description*
+            </label>
+            <textarea name="description1" id="description1" placeholder="Enter a short description" required></textarea>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="openinghours1">
+                Opening hours*
+            </label>
+            <select id="openinghours1" data-native-menu='true'>
+                <option value="24">24 hours</option>
+                <option value="12">12 hours</option>
+                <option value="8">8 hours</option>
+                <option value="6">6 hours</option>
+            </select>
+
+        </div>
+
+       <!-- <fieldset class="ui-grid-a">
+            <div class="ui-block-a"><a data-role="button" data-rel="back" data-icon="back" data-theme="b">Back</a></div>
+            <div class="ui-block-b"><a data-role="button" id="butSocketNext1" data-icon="forward" data-theme="b">Next</a></div>
+        </fieldset>-->
+       <!-- <div data-role="popup" id="popupSocketValidate">
+            <a href="#" data-rel="back" data-role="button" data-theme='a' data-icon="delete" data-iconpos="notext"
+               class="ui-btn-right">Close</a>
+            <div data-role="header" data-theme='a'>
+                <h1>Required fields must be filled out.</h1>
+            </div>
+            <div data-role="content" data-theme='a'>
+                <p>Please fill all necessary fields. (*)</p>
+            </div>
+            <div  data-role="footer" data-theme='a'>
+                <a href="dialog/index.html" data-rel="back" data-icon="ok" data-iconpos="left" data-role="button"
+                   data-inline="true">ok</a>
+            </div>
+        </div>-->
+    </div>
+    <!-- /content -->
+    <div data-role="footer" data-id="foo1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+        <div data-role="navbar">
+            <ul>
+                <li><a data-rel="back" data-icon="back" data-theme="b">locate</a>
+                </li>
+                <li><a id="butSocketNext" data-icon="forward" data-theme="b" >photo</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--/SOCKET_PAGE-->
+
+<!--FOTO_PAGE-->
+<div data-role="page" id="fotoPage" data-theme='a'>
+
+    <div data-role="header" data-id="head1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+        <h3>Charge.info</h3>
+        <div data-role="navbar" data-theme='a'>
+            <ul>
+                <li>
+                    <a data-icon="myapp-navigation" class="ui-disabled">locate</a>
+                </li>
+                <li><a data-icon="gear" class="ui-disabled" >socket</a>
+                </li>
+
+                <li><a data-icon="myapp-camera" class="ui-btn-active ui-state-persist">photo</a>
+                </li>
+                <li><a data-icon="myapp-eye" class="ui-disabled">confirm</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div data-role="content" id="hulsa">
+        <div></div>
+
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <div class="ui-bar ui-bar-a">
+                    <div data-role="fieldcontain">
+                        <label for="a1">
+                            Picture 1
+                        </label>
+                        <a id="a1">
+                            <img id="i1" src="#"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-block-b">
+                <div class="ui-bar ui-bar-a">
+                    <div data-role="fieldcontain">
+                        <label for="a2">
+                            Picture 2
+                        </label>
+                        <a id="a2">
+                            <img id="i2" src="#"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-block-a">
+                <div class="ui-bar ui-bar-a">
+                    <div data-role="fieldcontain">
+                        <label for="a3">
+                            Picture 3
+                        </label>
+                        <a id="a3">
+                            <img id="i3" src="#"/>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="ui-block-b">
+                <div class="ui-bar ui-bar-a">
+                    <div data-role="fieldcontain">
+                        <label for="a4">
+                            Picture 4
+                        </label>
+                        <a id="a4">
+                            <img id="i4" src="#"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-block-a">
+                <div class="ui-bar ui-bar-a">
+                    <div data-role="fieldcontain">
+                        <label for="a5">
+                            Picture 5
+                        </label>
+                        <a id="a5">
+                            <img id="i5" src="#"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-block-b">
+                <div class="ui-bar ui-bar-a">
+                    <div data-role="fieldcontain">
+                        <label for="a6">
+                            Picture 6
+                        </label>
+                        <a id="a6">
+                            <img id="i6" src="#"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div data-role="popup" id="pop" data-theme='a' class="photopopup">
+                <a href="#" data-rel="back" data-role="button" data-theme='a' data-icon="delete" data-iconpos="notext"
+                   class="ui-btn-right">Close</a>
+                <img id="popImg" src="#"/>
+
+                <div>
+                    <a data-rel="back" data-icon="ok" data-iconpos="left" data-role="button"
+                       data-inline="true" id="imagePopUpUpdate">Update</a>
+                    <a data-rel="back" data-icon="delete" data-iconpos="left"
+                       data-role="button" data-inline="true" id="imagePopDelete">Delete</a>
+                </div>
+            </div>
+        </div>
+     <!--   <fieldset class="ui-grid-a">
+            <div class="ui-block-a"><a data-role="button" data-rel="back" data-icon="back" data-theme="b">Back</a></div>
+            <div class="ui-block-b"><a data-role="button" id="butSocket1" data-icon="forward" data-theme="b">Next</a></div>
+        </fieldset>-->
+    </div>
+    <div data-role="footer" data-id="foo1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+        <div data-role="navbar" data-theme='a'>
+            <ul>
+                <li><a data-rel="back" data-icon="back" data-theme="b">socket</a>
+                </li>
+                <li><a id="butSocket" data-icon="forward" data-theme="b">confirm</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--FOTO_PAGE-->
+
+<!--CONFIRMATION_PAGE-->
+<div data-role="page" id="confirmationPage" data-theme='a'>
+    <div data-role="header" data-id="head1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+        <h3>Charge.info</h3>
+        <div data-role="navbar">
+            <ul>
+                <li>
+                    <a data-icon="myapp-navigation" class="ui-disabled">locate</a>
+                </li>
+                <li><a data-icon="gear" class="ui-disabled">socket</a>
+                </li>
+                <li><a data-icon="myapp-camera" class="ui-disabled">photo</a>
+                </li>
+                <li><a data-icon="myapp-eye" class="ui-btn-active ui-state-persist">confirm</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /navbar -->
+    </div>
+    <div data-role="content">
+        <form id="confirmationForm" data-ajax="false" accept-charset="ISO-8859-1">
+            <!-- GPS COORDINATES -->
+            <h2>
+                Coordinates
+            </h2>
+
+            <div data-role="fieldcontain">
+                <label for="longitude">
+                    Longitude
+                </label>
+                <input name="longitude" id="longitude" class="ui-disabled"/>
+
+            </div>
+            <div data-role="fieldcontain">
+                <label for="latitude">
+                    Latitude
+                </label>
+                <input name="latitude" id="latitude" class="ui-disabled"/>
+            </div>
+            <h2>
+                Location
+            </h2>
+
+            <div data-role="fieldcontain">
+                <label for="locname">
+                    Location name
+                </label>
+                <input name="locname" id="locname" class="ui-disabled"/>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="street">
+                    Street & number
+                </label>
+                <input name="street" id="street" class="ui-disabled"/>
+            </div>
+
+            <div data-role="fieldcontain">
+                <label for="postalcode">
+                    Postalcode
+                </label>
+                <input name="postalcode" id="postalcode" class="ui-disabled"/>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="city">
+                    City
+                </label>
+                <input name="city" id="city" class="ui-disabled"/>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="country">
+                    Country
+                </label>
+                <select id="country" name="country" data-theme='a' class="ui-disabled">
+                </select>
+            </div>
+            <h2>
+                Socket
+            </h2>
+
+            <div data-role="fieldcontain">
+                <label for="socketType_1" class="select">Socket-type-1</label>
+                <select name="socketType_1[]" id="socketType_1" multiple="multiple" data-native-menu="true"
+                        data-icon="grid" data-iconpos="left" class="ui-disabled">
+                </select>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="socketType_2" class="select">Socket-type-2</label>
+                <select name="socketType_2[]" id="socketType_2" multiple="multiple" data-native-menu="true"
+                        data-icon="grid" data-iconpos="left" class="ui-disabled">
+                </select>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="description">
+                    Description
+                </label>
+                <textarea name="description" id="description" class="ui-disabled"></textarea>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="openinghours">
+                    Opening hours
+                </label>
+                <input name="openinghours" id="openinghours" class="ui-disabled"/>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="siteType1">
+                    Sitetype
+                </label>
+                <select id="siteType1" name="siteType1" data-theme='a' data-native-menu="true" class="ui-disabled">
+                </select>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="group">
+                    Group
+                </label>
+                <select id="group" name="group" data-theme='a' data-native-menu='true' class="ui-disabled">
+                </select>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="ampere2">
+                    Ampere
+                </label>
+                <input name="ampere2" id="ampere2" class="ui-disabled"/>
+            </div>
+            <div data-role="fieldcontain" style="display: none;" >
+                <label for="points">
+                    Points
+                </label>
+                <input name="points" id="points" class="ui-disabled"/>
+            </div>
+            <h1>
+                Photos  THIIS IS A TEST
+            </h1>
+            <div data-role="fieldcontain" style="display: none;">
+                <label for="images1" class="select">Images</label>
+                <select name="images1[]" id="images1" multiple="multiple" data-native-menu="true"
+                        data-icon="grid" data-iconpos="left">
+                </select>
+            </div>
+            <div data-role="fieldcontain">
+                <div id="images"></div>
+            </div>
+<!--            <fieldset class="ui-grid-a">
+                <div class="ui-block-a"><a data-role="button" data-rel="back" data-icon="back" data-theme="c">Back</a></div>
+                <div class="ui-block-b"><input type="button" name="buttonSend" id="buttonSend1" value="Submit!" data-icon="forward" data-theme="e">
+                </div>
+            </fieldset>-->
+        </form>
+<!--        <div data-role="popup" id="confirmSuccess">
+            <a href="#" data-rel="back" data-role="button" data-theme='a' data-icon="delete" data-iconpos="notext"
+               class="ui-btn-right">Close</a>
+
+            <div data-role="header" data-theme='a'>
+                <h1>Success</h1>
+            </div>
+
+            <div data-role="content" data-theme='a'>
+                <p>Confirmation Successfull</p>
+
+                <p>You have been rewarded with <span id="span"></span> Points</p>
+            </div>
+            <div  data-role="footer" data-theme='a'>
+                <a href="dialog/index.html" data-rel="back" data-icon="ok" data-iconpos="left" data-role="button"
+                   data-inline="true" id="newPointFinish">New Point</a>
+                <a href="dialog/index.html" data-rel="back" data-icon="ok" data-iconpos="left" data-role="button"
+                   data-inline="true" id="newPointLogout">Logout</a>
+
+
+            </div>
+        </div>-->
+    </div>
+    <div data-role="footer" data-id="foo1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+        <div data-role="navbar">
+            <ul>
+                <li><a data-rel="back" data-icon="back" data-theme="b">photo</a>
+                </li>
+                <li><a id="buttonSend" data-icon="forward" data-theme="b">submit</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--CONFIRMATION_PAGE-->
+
+
+<!--REGISTER_PAGE-->
+<div data-role="page" id="registerPage" data-theme='a'>
+    <div data-role="header" data-id="head1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+
+        <h1>
+            Register
+        </h1>
+        <!-- /navbar -->
+    </div>
+    <!--CONTENT-->
+
+
+    <div data-role="content">
+        <form id="registerForm" data-ajax="false">
+                 <div data-role="fieldcontain">
+                            <label>
+                                Chargelocator points are bonus points which you can trade. With each input field there are chargelocator points
+                                attached to it. So register now in order to earn Chargelocator-points. It's free:
+                            </label>
+
+                        </div>
+            <div data-role="fieldcontain">
+            <label for="emailR">
+                Email *
+            </label>
+            <input name="emailR" id="emailR" placeholder="example@address.com" type="email">
+        </div>
+            <div data-role="fieldcontain">
+                <label for="usernameR">
+                    Username *
+                </label>
+                <input name="usernameR" id="usernameR" type="text">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="vorname">
+                    First Name
+                </label>
+                <input name="vorname" id="vorname" type="text">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="nachname">
+                    Last Name
+                </label>
+                <input name="nachname" id="nachname" type="text">
+            </div>
+            <!--           <div data-role="fieldcontain">
+                           <label for="usernameR">
+                               Username*
+                           </label>
+                           <input name="usernameR" id="usernameR" value="" type="text">
+                       </div>-->
+            <div data-role="fieldcontain">
+                <label for="passwordR">
+                    Password *
+                </label>
+                <input name="passwordR" id="passwordR" value="" type="password">
+            </div>
+            <!--            <div data-role="fieldcontain">
+                            <label for="passwordReg">
+                                Password*
+                            </label>
+                            <input name="passwordReg" id="passwordReg" value="" type="password">
+                        </div>-->
+
+            <!--           <div data-role="fieldcontain">
+                           <label for="showUserOnline">
+                               Show User Name Online
+                           </label>
+                           <select name="toggleswitch1" id="showUserOnline" data-theme='a' data-role="slider">
+                               <option value="off">
+                                   No
+                               </option>
+                               <option value="on">
+                                   Yes
+                               </option>
+                           </select>
+                       </div>
+                       <div data-role="fieldcontain">
+                           <label for="yourEv">
+                               Your Ev (for Statistics)
+                           </label>
+                           <input name="yourEv" id="yourEv" placeholder="yourEv" value="yourEv" type="text">
+                       </div>-->
+            <input type="button" data-theme='a' name="regSubmit" id="regSubmit" value="Register!">
+
+        </form>
+    </div>
+
+    <!--    <div data-role="footer" data-id="foo1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+            <div data-role="navbar">
+                <ul>
+                    <li><a data-rel="back" data-icon="back">Back</a>
+                    </li>
+                </ul>
+            </div>
+            &lt;!&ndash; /navbar &ndash;&gt;
+    </div>
+    &lt;!&ndash; /footer &ndash;&gt;-->
+</div>
+<!-- PASSWORD RECOVERY PAGE-->
+<div data-role="page" id="passWordRecoveryPage" data-theme='a'>
+    <div data-role="header" data-id="head1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+        <h1>Password Recovery</h1>
+    </div>
+    <!--CONTENT-->
+    <div data-role="content">
+
+        <form id="email-recover" data-ajax="false">
+            <fieldset>
+
+                <div data-role="fieldcontain">
+                    <label for="email">Enter your email:</label>
+                    <input type="email" value="" name="email" id="email"/>
+                </div>
+                <input type="button" data-theme='a' name="recover" id="recover" value="Send Email">
+            </fieldset>
+        </form>
+    </div>
+
+    <!--    <div data-role="footer" data-id="foo1" data-position="fixed" data-tap-toggle="false" data-theme='a'>
+            <div data-role="navbar">
+                <ul>
+                    <li><a data-rel="back" data-icon="back">back</a>
+                    </li>
+                </ul>
+            </div>
+            &lt;!&ndash; /navbar &ndash;&gt;
+    </div>-->
+    <!-- /footer -->
+</div>
+<!--Password Recovery Page-->
+</body>
+</html>
